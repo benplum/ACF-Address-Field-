@@ -15,9 +15,21 @@ if ( ! defined( 'ABSPATH' ) ) {
   exit;
 }
 
-class acf_plugin_field_address {
+class ACF_Plugin_Address_Field {
+
+  protected static $instance;
+
+  public $file = __FILE__;
 
   var $settings;
+
+  public static function get_instance() {
+    if ( empty( self::$instance ) && ! ( self::$instance instanceof ACF_Plugin_Address_Field ) ) {
+      self::$instance = new ACF_Plugin_Address_Field();
+    }
+
+    return self::$instance;
+  }
 
   function __construct() {
     $this->settings = array(
@@ -35,9 +47,11 @@ class acf_plugin_field_address {
 
     // load_plugin_textdomain( 'acf', false, plugin_basename( dirname( __FILE__ ) ) . '/lang' );
 
-    include_once( 'fields/class-acf-field-address-v' . $version . '.php' );
+    include_once 'fields/class-acf-field-address-v' . $version . '.php';
   }
 
 }
 
-new acf_plugin_address_field();
+ACF_Plugin_Address_Field::get_instance();
+
+include 'includes/updater.php';
