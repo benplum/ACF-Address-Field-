@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
   exit;
 }
 
-class ACF_Field_Address_Updater {
+class ACF_Plugin_Address_Field_Updater {
 
   protected static $instance;
 
@@ -19,8 +19,8 @@ class ACF_Field_Address_Updater {
   public $response;
 
   public static function get_instance() {
-    if ( empty( self::$instance ) && ! ( self::$instance instanceof ACF_Field_Address_Updater ) ) {
-      self::$instance = new ACF_Field_Address_Updater();
+    if ( empty( self::$instance ) && ! ( self::$instance instanceof ACF_Plugin_Address_Field_Updater ) ) {
+      self::$instance = new ACF_Plugin_Address_Field_Updater();
     }
 
     return self::$instance;
@@ -130,4 +130,4 @@ class ACF_Field_Address_Updater {
 
 // Instance
 
-ACF_Field_Address_Updater::get_instance();
+ACF_Plugin_Address_Field_Updater::get_instance();
