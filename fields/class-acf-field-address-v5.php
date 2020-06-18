@@ -7,6 +7,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class acf_field_address extends acf_field {
 
+  public $sub_fields = array(
+    'street' => 'Street',
+    'street2' => 'Street 2',
+    'street3' => 'Street 3',
+    'city' => 'City',
+    'state' => 'State',
+    'zip' => 'ZIP',
+    'country' => 'Country',
+  );
+
   function __construct( $settings ) {
     $this->name = 'address';
 
@@ -15,13 +25,15 @@ class acf_field_address extends acf_field {
     $this->category = 'content';
 
     $this->defaults = array(
-      'display_street' => true,
-      'display_street2' => false,
-      'display_street3' => false,
-      'display_city' => true,
-      'display_state' => true,
-      'display_zip' => true,
-      'display_country' => false,
+      'sub_fields' => array(
+        'street' => array( 'active' => 1, 'required' => 1 ),
+        'street2' => array( 'active' => 0, 'required' => 0 ),
+        'street3' => array( 'active' => 0, 'required' => 0 ),
+        'city' => array( 'active' => 1, 'required' => 1 ),
+        'state' => array( 'active' => 1, 'required' => 1 ),
+        'zip' => array( 'active' => 1, 'required' => 1 ),
+        'country' => array( 'active' => 0, 'required' => 0 ),
+      ),
     );
 
     $this->l10n = array(
@@ -35,55 +47,54 @@ class acf_field_address extends acf_field {
 
 
   function render_field_settings( $field ) {
+    
+    foreach ( $this->sub_fields as $key => $label ) {
 
-    acf_render_field_setting( $field, array(
-      'label' => __( 'Street', 'acf' ),
-      // 'instructions'  => __( 'Customise the input font size', 'acf' ),
-      'type' => 'true_false',
-      'name' => 'display_street',
-    ));
+      acf_render_field_wrap( array(
+        'label' => __($label,'acf'),
+        'instructions' => '',
+        'type' => 'true_false',
+        'ui' => true,
+        'ui_on_text' => 'On',
+        'ui_off_text' => 'Off',
+        // 'message' => 'Active',
+        'name' => 'active',
+        'prefix' => $field['prefix'] . '[sub_fields][' . $key . ']',
+        'value' => $field['sub_fields'][ $key ]['active'],
+        'wrapper' => array(
+          'data-name' => $key,
+          'class' => 'acf-field-setting-address',
+        ),
+      ), 'tr' );
+      
+      acf_render_field_wrap( array(
+        'label' => '',
+        'instructions' => '',
+        'type' => 'text',
+        'name' => 'label',
+        'prefix' => $field['prefix'] . '[sub_fields][' . $key . ']',
+        'value' => $field['sub_fields'][ $key ]['label'],
+        'prepend' => __('Label', 'acf'),
+        'placeholder' => $label,
+        'wrapper' => array(
+          'data-append' => $key,
+        ),
+      ), 'tr' );
 
-    acf_render_field_setting( $field, array(
-      'label' => __( 'Street 2', 'acf' ),
-      // 'instructions'  => __( 'Customise the input font size', 'acf' ),
-      'type' => 'true_false',
-      'name' => 'display_street2',
-    ));
+      acf_render_field_wrap( array(
+        'label' => '',
+        'instructions' => '',
+        'type' => 'true_false',
+        'message' => 'Required',
+        'name' => 'required',
+        'prefix' => $field['prefix'] . '[sub_fields][' . $key . ']',
+        'value' => $field['sub_fields'][ $key ]['required'],
+        'wrapper' => array(
+          'data-append' => $key,
+        ),
+      ), 'tr' );
 
-    acf_render_field_setting( $field, array(
-      'label' => __( 'Street 3', 'acf' ),
-      // 'instructions'  => __( 'Customise the input font size', 'acf' ),
-      'type' => 'true_false',
-      'name' => 'display_street3',
-    ));
-
-    acf_render_field_setting( $field, array(
-      'label' => __( 'City', 'acf' ),
-      // 'instructions'  => __( 'Customise the input font size', 'acf' ),
-      'type' => 'true_false',
-      'name' => 'display_city',
-    ));
-
-    acf_render_field_setting( $field, array(
-      'label' => __( 'State', 'acf' ),
-      // 'instructions'  => __( 'Customise the input font size', 'acf' ),
-      'type' => 'true_false',
-      'name' => 'display_state',
-    ));
-
-    acf_render_field_setting( $field, array(
-      'label' => __( 'ZIP', 'acf' ),
-      // 'instructions'  => __( 'Customise the input font size', 'acf' ),
-      'type' => 'true_false',
-      'name' => 'display_zip',
-    ));
-
-    acf_render_field_setting( $field, array(
-      'label' => __( 'Country', 'acf' ),
-      // 'instructions'  => __( 'Customise the input font size', 'acf' ),
-      'type' => 'true_false',
-      'name' => 'display_country',
-    ));
+    }
 
   }
 
@@ -103,84 +114,33 @@ class acf_field_address extends acf_field {
 
     $html .= '<div class="acf_address">';
 
-    if ( $field['display_street'] ) {
-       $input_attrs  = array(
-        'type' => 'text',
-        'id' => $field['id'] . '[street]',
-        'name' => $field['name'] . '[street]',
-        'value' => $field['value']['street'],
-        // 'placeholder' => 'Street',
-      );
-      $html .= '<div class="address_wrap address_street">' . acf_get_text_input( acf_filter_attrs( $input_attrs ) ) . '<span class="address_sublabel">Street</span></div>';
-    }
+    foreach ( $this->sub_fields as $key => $label ) {
+      if ( $field['sub_fields'][ $key ]['active'] ) {
+        $id = $field['id'] . '[' . $key . ']';
+        $name = $field['name'] . '[' . $key . ']';
 
-    if ( $field['display_street2'] ) {
-       $input_attrs  = array(
-        'type' => 'text',
-        'id' => $field['id'] . '[street2]',
-        'name' => $field['name'] . '[street2]',
-        'value' => $field['value']['street2'],
-        // 'placeholder' => 'Street 2',
-      );
-      $html .= '<div class="address_wrap address_street2">' . acf_get_text_input( acf_filter_attrs( $input_attrs ) ) . '<span class="address_sublabel">Street 2</span></div>';
-    }
+        if ( ! empty( $field['sub_fields'][ $key ]['label'] ) ) {
+          $label = $field['sub_fields'][ $key ]['label'];
+        }
 
-    if ( $field['display_street3'] ) {
-       $input_attrs  = array(
-        'type' => 'text',
-        'id' => $field['id'] . '[street3]',
-        'name' => $field['name'] . '[street3]',
-        'value' => $field['value']['street3'],
-        // 'placeholder' => 'Street 3',
-      );
-      $html .= '<div class="address_wrap address_street3">' . acf_get_text_input( acf_filter_attrs( $input_attrs ) ) . '<span class="address_sublabel">Street 3</span></div>';
-    }
+        if ( $field['sub_fields'][ $key ]['required'] ) {
+          $label .= '<span class="required">*</span>';
+        }
 
-    if ( $field['display_city'] ) {
-       $input_attrs  = array(
-        'type' => 'text',
-        'id' => $field['id'] . '[city]',
-        'name' => $field['name'] . '[city]',
-        'value' => $field['value']['city'],
-        // 'placeholder' => 'City',
-      );
-      $html .= '<div class="address_wrap address_city">' . acf_get_text_input( acf_filter_attrs( $input_attrs ) ) . '<span class="address_sublabel">City</span></div>';
-    }
+        $input_attrs  = array(
+          'type' => 'text',
+          'id' => $id,
+          'name' => $name,
+          'value' => $field['value'][ $key ],
+          'required' => $field['sub_fields'][ $key ]['required'],
+          // 'placeholder' => 'Street',
+        );
 
-    if ( $field['display_state'] ) {
-       $input_attrs  = array(
-        'type' => 'text',
-        'id' => $field['id'] . '[state]',
-        'name' => $field['name'] . '[state]',
-        'value' => $field['value']['state'],
-        // 'placeholder' => 'State',
-      );
-      $html .= '<div class="address_wrap address_state">' . acf_get_text_input( acf_filter_attrs( $input_attrs ) ) . '
-      <span class="address_sublabel">State</span></div>';
-    }
-
-    if ( $field['display_zip'] ) {
-       $input_attrs  = array(
-        'type' => 'text',
-        'id' => $field['id'] . '[zip]',
-        'name' => $field['name'] . '[zip]',
-        'value' => $field['value']['zip'],
-        // 'placeholder' => 'ZIP',
-      );
-      $html .= '<div class="address_wrap address_zip">' . acf_get_text_input( acf_filter_attrs( $input_attrs ) ) . '
-      <span class="address_sublabel">ZIP</span></div>';
-    }
-
-    if ( $field['display_country'] ) {
-       $input_attrs  = array(
-        'type' => 'text',
-        'id' => $field['id'] . '[country]',
-        'name' => $field['name'] . '[country]',
-        'value' => $field['value']['country'],
-        // 'placeholder' => 'Country',
-      );
-      $html .= '<div class="address_wrap address_country">' . acf_get_text_input( acf_filter_attrs( $input_attrs ) ) . '
-      <span class="address_sublabel">Country</span></div>';
+        $html .= '<div class="address_wrap address_' . $key . '">';
+        $html .= acf_get_text_input( acf_filter_attrs( $input_attrs ) );
+        $html .= '<label class="address_sublabel" for="' . $id . '">' . $label . '</label>';
+        $html .= '</div>';
+      }
     }
 
     $html .= '</div>';
