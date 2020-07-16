@@ -2,8 +2,8 @@
 /*
 Plugin Name: Advanced Custom Fields: Address Field
 Plugin URI: https://github.com/benplum/ACF-Field-Address
-Description: Simple address field for ACF Pro.
-Version: 1.0.2
+Description: A simple address field for Advanced Custom Fields Pro.
+Version: 1.0.3
 Author: Ben Plum
 Author URI: https://benplum.com
 License: GPLv2 or later
