@@ -47,7 +47,7 @@ class acf_field_address extends acf_field {
 
 
   function render_field_settings( $field ) {
-    
+
     foreach ( $this->sub_fields as $key => $label ) {
 
       acf_render_field_wrap( array(
@@ -65,8 +65,8 @@ class acf_field_address extends acf_field {
           'data-name' => $key,
           'class' => 'acf-field-setting-address',
         ),
-      ), 'tr' );
-      
+      ), 'div' );
+
       acf_render_field_wrap( array(
         'label' => '',
         'instructions' => '',
@@ -79,7 +79,7 @@ class acf_field_address extends acf_field {
         'wrapper' => array(
           'data-append' => $key,
         ),
-      ), 'tr' );
+      ), 'div' );
 
       acf_render_field_wrap( array(
         'label' => '',
@@ -92,9 +92,38 @@ class acf_field_address extends acf_field {
         'wrapper' => array(
           'data-append' => $key,
         ),
-      ), 'tr' );
+      ), 'div' );
 
     }
+
+?>
+<style>
+.post-type-acf-field-group .acf-field-setting-address {
+  flex-wrap: wrap;
+  max-width: 100%;
+  margin-bottom: 15px;
+}
+.post-type-acf-field-group .acf-field-setting-address .acf-label {
+  order: -1;
+  flex: 0 0 100%;
+  max-width: 100%;
+  margin: 0 0 5px;
+}
+.post-type-acf-field-group .acf-field-setting-address ul.acf-hl {
+  align-items: center;
+}
+.post-type-acf-field-group .acf-field-setting-address li:nth-child(1) {
+  width: auto;
+  margin-right: 10px;
+}
+.post-type-acf-field-group .acf-field-setting-address li:nth-child(2) {
+  width: 400px;
+}
+.post-type-acf-field-group .acf-field-setting-address li:nth-child(3) {
+  width: auto;
+}
+</style>
+<?php
 
   }
 
